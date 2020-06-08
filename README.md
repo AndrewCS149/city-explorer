@@ -25,16 +25,30 @@ This application allows a user to type a desired City name in a search bar. When
 
 ## Change Log
 
-06-08-2020 16:05 - Functioning server.
+06-08-2020 16:05 - Functioning server and deployed to heroku.
 
 ### Time Estimates
 
-Number and name of feature: 
+Number and name of feature: #1 Repository Set-up
 
-Estimate of time needed to complete:
+Estimate of time needed to complete: 45 min
 
-Start time: 
+Start time: 15:30
 
-Finish time:
+Finish time: 16:18
 
-Actual time needed to complete:
+Actual time needed to complete: 47 min
+
+---
+
+Number and name of feature: #2 Locations
+
+Estimate of time needed to complete: 90 min
+
+Start time: 16:19
+
+Finish time: 
+
+Actual time needed to complete: 
+
+---
