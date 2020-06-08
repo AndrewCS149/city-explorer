@@ -1,10 +1,12 @@
-# lab-06-301
-Build an API for the application 'city explorer'. 
+# City Explorer
 
+## Code 301 Project
+
+Build an API for the application 'city explorer'. 
 
 ---
 
-## Time Estimates
+### Time Estimates
 
 Number and name of feature: 
 
