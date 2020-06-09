@@ -1,6 +1,7 @@
 const express = require('express')
 const app = express()
-
+// NEW
+const superAgent = require('superagent');
 require('dotenv').config();
 const PORT = process.env.PORT || 3001;
 
@@ -33,6 +34,21 @@ app.get('/location', (req, res) => {
 
   try {
     let city = req.query.city;
+
+    // NEW
+    // url to the data that we want
+    let url = `https://us1.locationiq.com/v1/search.php?key=${process.env.GEO_DATA_API_KEY}q=${city}&format=json`
+
+    // NEW
+    // grab results from superagent
+    superAgent.get(url)
+      .then(results => {
+        console.log(results.body);
+        let obj = new Location(city, results.body[0]);
+
+        res.status(200).send(obj);
+      });
+
     let jsonData = require('./data/location.json');
     let locationData = new Location(city, jsonData[0]);
 
@@ -47,6 +63,18 @@ app.get('/location', (req, res) => {
 app.get('/weather', (req, res) => {
 
   try {
+    // NEW
+    let city = req.query.formatted_query;
+
+    // NEW
+    let url = `http://api.weatherbit.io/.v2.0/current?city=${city}&key=${process.env.WEATHER_API_KEY}`;
+
+    // NEW
+    superAgent(url)
+      .then(results => {
+        console.log(results.body);
+      }).catch(err => console.log(err));
+
     let wxArr = [];
     let wxData = require('./data/weather.json');
 
@@ -70,3 +98,11 @@ app.get('*', (req, res) => {
 app.listen(PORT, () => {
   console.log(`listening on ${PORT}`);
 });
+
+
+// URL for simple rest client
+// GET https://us1.locationiq.com/v1/search.php?key=YOUR_PRIVATE_TOKEN&q=SEARCH_STRING&format=json
+
+// make the key private
+
+// TODO: delete 'NEW' comments
