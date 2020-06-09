@@ -47,8 +47,30 @@ Estimate of time needed to complete: 90 min
 
 Start time: 16:19
 
-Finish time: 
+Finish time: 21:30
 
-Actual time needed to complete: 
+Actual time needed to complete: 180 min 
 
 ---
+
+Number and name of feature: #3 Weather
+
+Estimate of time needed to complete: 90 min
+
+Start time: 21:30
+
+Finish time: 21: 49
+
+Actual time needed to complete: 19 min 
+
+---
+
+Number and name of feature: #4 Errors
+
+Estimate of time needed to complete: 30 min
+
+Start time: 21:50
+
+Finish time: 22:07
+
+Actual time needed to complete: 17 min  
