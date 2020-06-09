@@ -42,17 +42,14 @@ app.get('/location', (req, res) => {
 
     // NEW
     // grab results from superagent
-    let locationObj;
     superAgent.get(url)
       .then(results => {
-        console.log(results.body);
-        locationObj = new Location(city, results.body[0]);
+        // console.log(results.body);
+        let locationObj = new Location(city, results.body[0]);
+        console.log(locationObj);
+        res.status(200).send(locationObj);
 
       });
-    res.status(200).send(locationObj);
-    // let jsonData = require('./data/location.json');
-    // let locationData = new Location(city, jsonData[0]);
-
 
   } catch (err) {
     error(err, res);
