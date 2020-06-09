@@ -18,7 +18,6 @@ app.use(cors());
 app.get('/location', (req, res) => {
 
   try {
-    // console.log(req.query.city)
     let searchQuery = req.query.city;
     let jsonData = require('./data/location.json');
     let wxData = new Location(searchQuery, jsonData[0]);
@@ -27,16 +26,16 @@ app.get('/location', (req, res) => {
 
     res.status(200).send(wxData);
   } catch (err) {
-    console.log("Error", err);
-    res.status(500).send("There was an error on our part.");
+    console.log('Error', err);
+    res.status(500).send('There was an error on our part.');
   }
 });
 
 function Location(searchQuery, obj) {
-  this.searchQuery = searchQuery;
-  this.formatQuery = obj.formatted_query;
-  this.lat = obj.latitude;
-  this.long = obj.longitude;
+  this.search_query = searchQuery;
+  this.formatted_query = obj.display_name;
+  this.latitude = obj.lat;
+  this.longitude = obj.lon;
 }
 
 app.listen(PORT, () => {
