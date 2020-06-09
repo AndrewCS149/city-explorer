@@ -9,6 +9,8 @@ const PORT = process.env.PORT || 3001;
 const cors = require('cors');
 app.use(cors());
 
+
+
 // constructor function for Location data
 function Location(searchQuery, obj) {
   this.search_query = searchQuery;
@@ -31,28 +33,25 @@ const error = (err, res) => {
 
 // location path
 app.get('/location', (req, res) => {
-
   try {
     let city = req.query.city;
 
     // NEW
     // url to the data that we want
-    // let url = `https://us1.locationiq.com/v1/search.php?key=${process.env.GEO_DATA_API_KEY}q=${city}&format=json`
+    let url = `https://us1.locationiq.com/v1/search.php?key=${process.env.GEO_DATA_API_KEY}q=${city}&format=json`
 
     // NEW
     // grab results from superagent
-    // superAgent.get(url)
-    //   .then(results => {
-    //     console.log(results.body);
-    //     let obj = new Location(city, results.body[0]);
+    superAgent.get(url)
+      .then(results => {
+        console.log(results.body);
+        let locationObj = new Location(city, results.body[0]);
+        res.status(200).send(locationObj);
 
-    //     res.status(200).send(obj);
-    //   });
+      });
+    // let jsonData = require('./data/location.json');
+    // let locationData = new Location(city, jsonData[0]);
 
-    let jsonData = require('./data/location.json');
-    let locationData = new Location(city, jsonData[0]);
-
-    res.status(200).send(locationData);
 
   } catch (err) {
     error(err, res);
@@ -75,9 +74,7 @@ app.get('/weather', (req, res) => {
     //     console.log(results.body);
     //   }).catch(err => console.log(err));
 
-    // let wxArr = [];
     let wxData = require('./data/weather.json');
-
     let wxArr = wxData.data.map(day => new Weather(day));
 
     res.status(200).send(wxArr);

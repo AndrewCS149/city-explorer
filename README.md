@@ -86,3 +86,15 @@ Start time: 14:50
 Finish time: 15:02
 
 Actual time needed to complete: 12 min 
+
+---
+
+Number and name of feature: #6 Locations
+
+Estimate of time needed to complete: 60 min
+
+Start time: 15:07
+
+Finish time: 
+
+Actual time needed to complete:
