@@ -19,7 +19,7 @@ function Location(searchQuery, obj) {
 // constructor function for weather data
 function Weather(obj) {
   this.forecast = obj.weather.description;
-  this.datetime = obj.datetime;
+  this.time = obj.datetime;
 }
 
 // location path
@@ -41,9 +41,16 @@ app.get('/location', (req, res) => {
 app.get('/weather', (req, res) => {
 
   try {
-    let searchQuery = req.query.weather;
-    let jsonData = require('./data/weather.json');
-    //   let wxData = new
+
+    let wxArr = [];
+    let wxData = require('./data/weather.json');
+
+    wxData.data.forEach(val => {
+      wxArr.push(new Weather(val));
+    });
+
+    res.status(200).send(wxArr);
+
   } catch (err) {
     console.log('Error', err);
     res.status(500).send('There was an error on our part.');
