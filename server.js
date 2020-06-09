@@ -37,17 +37,17 @@ app.get('/location', (req, res) => {
 
     // NEW
     // url to the data that we want
-    let url = `https://us1.locationiq.com/v1/search.php?key=${process.env.GEO_DATA_API_KEY}q=${city}&format=json`
+    // let url = `https://us1.locationiq.com/v1/search.php?key=${process.env.GEO_DATA_API_KEY}q=${city}&format=json`
 
     // NEW
     // grab results from superagent
-    superAgent.get(url)
-      .then(results => {
-        console.log(results.body);
-        let obj = new Location(city, results.body[0]);
+    // superAgent.get(url)
+    //   .then(results => {
+    //     console.log(results.body);
+    //     let obj = new Location(city, results.body[0]);
 
-        res.status(200).send(obj);
-      });
+    //     res.status(200).send(obj);
+    //   });
 
     let jsonData = require('./data/location.json');
     let locationData = new Location(city, jsonData[0]);
@@ -64,23 +64,21 @@ app.get('/weather', (req, res) => {
 
   try {
     // NEW
-    let city = req.query.formatted_query;
+    // let city = req.query.formatted_query;
 
     // NEW
-    let url = `http://api.weatherbit.io/.v2.0/current?city=${city}&key=${process.env.WEATHER_API_KEY}`;
+    // let url = `http://api.weatherbit.io/.v2.0/current?city=${city}&key=${process.env.WEATHER_API_KEY}`;
 
     // NEW
-    superAgent(url)
-      .then(results => {
-        console.log(results.body);
-      }).catch(err => console.log(err));
+    // superAgent(url)
+    //   .then(results => {
+    //     console.log(results.body);
+    //   }).catch(err => console.log(err));
 
-    let wxArr = [];
+    // let wxArr = [];
     let wxData = require('./data/weather.json');
 
-    wxData.data.forEach(day => {
-      wxArr.push(new Weather(day));
-    });
+    let wxArr = wxData.data.map(day => new Weather(day));
 
     res.status(200).send(wxArr);
 
@@ -106,3 +104,4 @@ app.listen(PORT, () => {
 // make the key private
 
 // TODO: delete 'NEW' comments
+// TODO: Fix potential issue with the try catch function displaying no matter what
