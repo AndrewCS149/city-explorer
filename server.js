@@ -22,6 +22,12 @@ function Weather(obj) {
   this.time = obj.datetime;
 }
 
+// 500 error message
+const error = (err, res) => {
+  console.log('Error', err);
+  res.status(500).send('There was an error on our part.');
+}
+
 // location path
 app.get('/location', (req, res) => {
 
@@ -31,9 +37,9 @@ app.get('/location', (req, res) => {
     let locationData = new Location(searchQuery, jsonData[0]);
 
     res.status(200).send(locationData);
+
   } catch (err) {
-    console.log('Error', err);
-    res.status(500).send('There was an error on our part.');
+    error(err, res);
   }
 });
 
@@ -41,7 +47,6 @@ app.get('/location', (req, res) => {
 app.get('/weather', (req, res) => {
 
   try {
-
     let wxArr = [];
     let wxData = require('./data/weather.json');
 
@@ -52,8 +57,7 @@ app.get('/weather', (req, res) => {
     res.status(200).send(wxArr);
 
   } catch (err) {
-    console.log('Error', err);
-    res.status(500).send('There was an error on our part.');
+    error(err, res);
   }
 });
 
