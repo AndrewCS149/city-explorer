@@ -38,6 +38,11 @@ function Location(searchQuery, obj) {
   this.longitude = obj.lon;
 }
 
+// catch all for unknown routes
+app.get('*', (req, res) => {
+  res.status(404).send('Sorry, this route does not exist.');
+})
+
 app.listen(PORT, () => {
   console.log(`listening on ${PORT}`);
 });
