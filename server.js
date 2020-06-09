@@ -32,9 +32,9 @@ const error = (err, res) => {
 app.get('/location', (req, res) => {
 
   try {
-    let searchQuery = req.query.city;
+    let city = req.query.city;
     let jsonData = require('./data/location.json');
-    let locationData = new Location(searchQuery, jsonData[0]);
+    let locationData = new Location(city, jsonData[0]);
 
     res.status(200).send(locationData);
 
@@ -50,8 +50,8 @@ app.get('/weather', (req, res) => {
     let wxArr = [];
     let wxData = require('./data/weather.json');
 
-    wxData.data.forEach(val => {
-      wxArr.push(new Weather(val));
+    wxData.data.forEach(day => {
+      wxArr.push(new Weather(day));
     });
 
     res.status(200).send(wxArr);
