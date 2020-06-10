@@ -1,6 +1,5 @@
 const express = require('express')
 const app = express()
-// NEW
 const superAgent = require('superagent');
 require('dotenv').config();
 const PORT = process.env.PORT || 3001;
@@ -23,11 +22,46 @@ function Weather(obj) {
   this.time = obj.datetime;
 }
 
+function Hike(obj) {
+  this.name = obj.name;
+  this.location = obj.location;
+  this.hikeLength = obj.length;
+  this.stars = obj.stars;
+  this.starVotes = obj.star_votes;
+  this.summary = obj.summary;
+  this.trailUrl = obj.trail_url;
+  this.conditions = obj.conditions;
+  this.conditionDate = obj.condition_date;
+  this.conditionTime = obj.condition_time;
+}
+
 // 500 error message
 const error = (err, res) => {
   console.log('Error', err);
   res.status(500).send('There was an error on our part.');
 }
+
+// Trails path
+app.get('/trails', (req, res) => {
+  try {
+
+    let lat = req.query.latitude;
+    let long = req.query.longitude;
+
+    let url = `https://www.hikingproject.com/data/get-trails?lat=${lat}&lon=${long}&maxDistance=10&key=${process.env.TRAIL_API_KEY}`
+
+    superAgent.get(url)
+      .then(results => {
+        let hikeObj = results.body.trails.map(hike => new Hike(hike));
+
+        res.status(200).send(hikeObj);
+      });
+
+  } catch (err) {
+    error(err, res);
+  }
+});
+
 
 // location path
 app.get('/location', (req, res) => {
@@ -40,9 +74,7 @@ app.get('/location', (req, res) => {
     // grab results from superagent
     superAgent.get(url)
       .then(results => {
-        // console.log(results.body);
         let locationObj = new Location(city, results.body[0]);
-        console.log(locationObj);
         res.status(200).send(locationObj);
       });
 
@@ -59,12 +91,11 @@ app.get('/weather', (req, res) => {
 
     let url = `https://api.weatherbit.io/v2.0/forecast/daily?city=${city}&key=${process.env.WEATHER_API_KEY}&days=8`;
 
-    superAgent(url)
+    superAgent.get(url)
       .then(results => {
         let wxArr = results.body.data.map(day => new Weather(day));
-        console.log(wxArr);
         res.status(200).send(wxArr);
-      }).catch(err => console.log(err));
+      });
 
   } catch (err) {
     error(err, res);
@@ -79,10 +110,6 @@ app.get('*', (req, res) => {
 app.listen(PORT, () => {
   console.log(`listening on ${PORT}.`);
 })
-
-
-// URL for simple rest client
-// GET https://us1.locationiq.com/v1/search.php?key=YOUR_PRIVATE_TOKEN&q=SEARCH_STRING&format=json
 
 // make the key private
 
