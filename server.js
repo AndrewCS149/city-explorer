@@ -1,6 +1,5 @@
 const express = require('express')
 const app = express()
-// NEW
 const superAgent = require('superagent');
 require('dotenv').config();
 const PORT = process.env.PORT || 3001;
@@ -45,13 +44,23 @@ const error = (err, res) => {
 // Trails path
 app.get('/trails', (req, res) => {
   try {
-    // url https://www.hikingproject.com/data/get-trails?lat=40.0274&lon=-105.2519&maxDistance=10&key=200792370-31f0e3dc974b27040f45339ce8bc995f
 
+    let lat = req.query.latitude;
+    let long = req.query.longitude;
+
+    let url = `https://www.hikingproject.com/data/get-trails?lat=${lat}&lon=${long}&maxDistance=10&key=${process.env.TRAIL_API_KEY}`
+
+    superAgent.get(url)
+      .then(results => {
+        let hikeObj = results.body.trails.map(hike => new Hike(hike));
+
+        res.status(200).send(hikeObj);
+      });
 
   } catch (err) {
     error(err, res);
   }
-})
+});
 
 
 // location path
@@ -65,9 +74,7 @@ app.get('/location', (req, res) => {
     // grab results from superagent
     superAgent.get(url)
       .then(results => {
-        // console.log(results.body);
         let locationObj = new Location(city, results.body[0]);
-        console.log(locationObj);
         res.status(200).send(locationObj);
       });
 
@@ -84,12 +91,11 @@ app.get('/weather', (req, res) => {
 
     let url = `https://api.weatherbit.io/v2.0/forecast/daily?city=${city}&key=${process.env.WEATHER_API_KEY}&days=8`;
 
-    superAgent(url)
+    superAgent.get(url)
       .then(results => {
         let wxArr = results.body.data.map(day => new Weather(day));
-        console.log(wxArr);
         res.status(200).send(wxArr);
-      }).catch(err => console.log(err));
+      });
 
   } catch (err) {
     error(err, res);
