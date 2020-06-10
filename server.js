@@ -27,14 +27,14 @@ function Weather(obj) {
 function Hike(obj) {
   this.name = obj.name;
   this.location = obj.location;
-  this.hikeLength = obj.length;
+  this.length = obj.length;
   this.stars = obj.stars;
-  this.starVotes = obj.star_votes;
+  this.star_votes = obj.starVotes;
   this.summary = obj.summary;
-  this.trailUrl = obj.trail_url;
+  this.trail_url = obj.url;
   this.conditions = obj.conditions;
-  this.conditionDate = obj.condition_date;
-  this.conditionTime = obj.condition_time;
+  this.condition_date = new Date(obj.conditionDate).toLocaleDateString();
+  this.condition_time = new Date(obj.conditionDate).toLocaleTimeString();
 }
 
 // 500 error message
@@ -69,7 +69,6 @@ app.get('/trails', (req, res) => {
 app.get('/location', (req, res) => {
   try {
     let city = req.query.city;
-
     // url to the data that we want
     let url = `https://us1.locationiq.com/v1/search.php?key=${process.env.GEO_DATA_API_KEY}&q=${city}&format=json`;
 
