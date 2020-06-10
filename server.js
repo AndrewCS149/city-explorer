@@ -1,3 +1,5 @@
+'use strict';
+
 const express = require('express')
 const app = express()
 const superAgent = require('superagent');
@@ -110,7 +112,5 @@ app.get('*', (req, res) => {
 app.listen(PORT, () => {
   console.log(`listening on ${PORT}.`);
 })
-
-// make the key private
 
 // TODO: Fix potential issue with the try catch function displaying no matter what
