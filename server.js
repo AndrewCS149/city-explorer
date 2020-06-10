@@ -9,8 +9,6 @@ const PORT = process.env.PORT || 3001;
 const cors = require('cors');
 app.use(cors());
 
-
-
 // constructor function for Location data
 function Location(searchQuery, obj) {
   this.search_query = searchQuery;
@@ -36,11 +34,9 @@ app.get('/location', (req, res) => {
   try {
     let city = req.query.city;
 
-    // NEW
     // url to the data that we want
     let url = `https://us1.locationiq.com/v1/search.php?key=${process.env.GEO_DATA_API_KEY}&q=${city}&format=json`;
 
-    // NEW
     // grab results from superagent
     superAgent.get(url)
       .then(results => {
@@ -48,7 +44,6 @@ app.get('/location', (req, res) => {
         let locationObj = new Location(city, results.body[0]);
         console.log(locationObj);
         res.status(200).send(locationObj);
-
       });
 
   } catch (err) {
@@ -60,22 +55,16 @@ app.get('/location', (req, res) => {
 app.get('/weather', (req, res) => {
 
   try {
-    // NEW
-    // let city = req.query.formatted_query;
+    let city = req.query.search_query;
 
-    // NEW
-    // let url = `http://api.weatherbit.io/.v2.0/current?city=${city}&key=${process.env.WEATHER_API_KEY}`;
+    let url = `https://api.weatherbit.io/v2.0/forecast/daily?city=${city}&key=${process.env.WEATHER_API_KEY}&days=8`;
 
-    // NEW
-    // superAgent(url)
-    //   .then(results => {
-    //     console.log(results.body);
-    //   }).catch(err => console.log(err));
-
-    let wxData = require('./data/weather.json');
-    let wxArr = wxData.data.map(day => new Weather(day));
-
-    res.status(200).send(wxArr);
+    superAgent(url)
+      .then(results => {
+        let wxArr = results.body.data.map(day => new Weather(day));
+        console.log(wxArr);
+        res.status(200).send(wxArr);
+      }).catch(err => console.log(err));
 
   } catch (err) {
     error(err, res);
@@ -87,10 +76,9 @@ app.get('*', (req, res) => {
   res.status(404).send('Sorry, this route does not exist.');
 })
 
-// listen on port 3000
 app.listen(PORT, () => {
-  console.log(`listening on ${PORT}`);
-});
+  console.log(`listening on ${PORT}.`);
+})
 
 
 // URL for simple rest client
@@ -98,5 +86,4 @@ app.listen(PORT, () => {
 
 // make the key private
 
-// TODO: delete 'NEW' comments
 // TODO: Fix potential issue with the try catch function displaying no matter what
