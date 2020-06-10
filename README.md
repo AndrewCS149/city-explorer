@@ -95,6 +95,30 @@ Estimate of time needed to complete: 60 min
 
 Start time: 15:07
 
-Finish time: 
+Finish time: 16:55
 
-Actual time needed to complete:
+Actual time needed to complete: 112 min
+
+---
+
+Number and name of feature: #7 Weather
+
+Estimate of time needed to complete: 60 min
+
+Start time: 16:56
+
+Finish time: 18:14
+
+Actual time needed to complete: 80 min
+
+---
+
+Number and name of feature: #8 Trails
+
+Estimate of time needed to complete: 60 min
+
+Start time: 18:15
+
+Finish time: 19:48
+
+Actual time needed to complete: 90 min 
