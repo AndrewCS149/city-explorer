@@ -23,11 +23,36 @@ function Weather(obj) {
   this.time = obj.datetime;
 }
 
+function Hike(obj) {
+  this.name = obj.name;
+  this.location = obj.location;
+  this.hikeLength = obj.length;
+  this.stars = obj.stars;
+  this.starVotes = obj.star_votes;
+  this.summary = obj.summary;
+  this.trailUrl = obj.trail_url;
+  this.conditions = obj.conditions;
+  this.conditionDate = obj.condition_date;
+  this.conditionTime = obj.condition_time;
+}
+
 // 500 error message
 const error = (err, res) => {
   console.log('Error', err);
   res.status(500).send('There was an error on our part.');
 }
+
+// Trails path
+app.get('/trails', (req, res) => {
+  try {
+    // url https://www.hikingproject.com/data/get-trails?lat=40.0274&lon=-105.2519&maxDistance=10&key=200792370-31f0e3dc974b27040f45339ce8bc995f
+
+
+  } catch (err) {
+    error(err, res);
+  }
+})
+
 
 // location path
 app.get('/location', (req, res) => {
@@ -79,10 +104,6 @@ app.get('*', (req, res) => {
 app.listen(PORT, () => {
   console.log(`listening on ${PORT}.`);
 })
-
-
-// URL for simple rest client
-// GET https://us1.locationiq.com/v1/search.php?key=YOUR_PRIVATE_TOKEN&q=SEARCH_STRING&format=json
 
 // make the key private
 
