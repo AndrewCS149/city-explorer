@@ -3,12 +3,16 @@
 const express = require('express')
 const app = express()
 const superAgent = require('superagent');
+const pg = require('pg');
 require('dotenv').config();
 const PORT = process.env.PORT || 3001;
 
 // remove browser protection to be able to pull data
 const cors = require('cors');
 app.use(cors());
+
+const client = new pg.Client(process.env.DATABASE_URL);
+client.on('error', err => console.log(err));
 
 // constructor function for Location data
 function Location(searchQuery, obj) {
@@ -64,7 +68,6 @@ app.get('/trails', (req, res) => {
   }
 });
 
-
 // location path
 app.get('/location', (req, res) => {
   try {
@@ -106,10 +109,17 @@ app.get('/weather', (req, res) => {
 // catch all for unknown routes
 app.get('*', (req, res) => {
   res.status(404).send('Sorry, this route does not exist.');
-})
+});
 
-app.listen(PORT, () => {
-  console.log(`listening on ${PORT}.`);
-})
+client.connect()
+  .then(() => {
+    app.listen(PORT, () => {
+      console.log(`listening on ${PORT}`);
+    });
+  });
+
+// app.listen(PORT, () => {
+//   console.log(`listening on ${PORT}.`);
+// });
 
 // TODO: Fix potential issue with the try catch function displaying no matter what
