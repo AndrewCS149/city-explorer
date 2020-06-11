@@ -143,7 +143,19 @@ Estimate of time needed to complete: 90 min
 
 Start time: 17:40
 
-Finish time:
+Finish time: 22:00
 
-Actual time needed to complete:
+Actual time needed to complete: 260 min
+
+---
+
+Number and name of feature: #11 Deploy
+
+Estimate of time needed to complete: 30 min
+
+Start time: 
+
+Finish time: 
+
+Actual time needed to complete: 
 
