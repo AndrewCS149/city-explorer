@@ -123,3 +123,27 @@ Finish time: 19:48
 
 Actual time needed to complete: 90 min 
 
+---
+
+Number and name of feature: #9 Database
+
+Estimate of time needed to complete: 90 min
+
+Start time: 15:45
+
+Finish time: 17:00
+
+Actual time needed to complete: 75 min
+
+---
+
+Number and name of feature: #10 Server
+
+Estimate of time needed to complete: 90 min
+
+Start time: 17:40
+
+Finish time:
+
+Actual time needed to complete:
+
