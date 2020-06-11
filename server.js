@@ -72,48 +72,45 @@ app.get('/trails', (req, res) => {
 app.get('/location', (req, res) => {
   try {
     let city = req.query.city;
-    let stored = false;
+
     // url to the data that we want
     let url = `https://us1.locationiq.com/v1/search.php?key=${process.env.GEO_DATA_API_KEY}&q=${city}&format=json`;
 
     // check city_explorer DB data
-    let citiesQuery = `SELECT search_query FROM locations WHERE search_query = '${city}';`;
-    // let citiesQuery = `SELECT search_query FROM locations;`;
-    client.query(citiesQuery)
+    let citiesQuery = 'SELECT * FROM locations WHERE search_query LIKE ($1);';
+
+    let safeVal = [city];
+    client.query(citiesQuery, safeVal)
       .then(results => {
 
-        results.rows.map(row => {
-          stored = true;
-          if (row.search_query === city) {
-            console.log(results.fields.field);
-            res.status(200).send(results.fields.field);
-          }
-        });
+        // if the results already exist in DB, then send that data
+        if (results.rowCount) {
+          res.status(200).send(results.rows[0]);
+
+          // if results dont exist in the DB, grab API data
+        } else {
+          let locationObj;
+          let format;
+          let lat;
+          let long;
+          superAgent.get(url)
+            .then(results => {
+              locationObj = new Location(city, results.body[0]);
+              format = locationObj.formatted_query;
+              lat = locationObj.latitude;
+              long = locationObj.longitude;
+              res.status(200).send(locationObj);
+
+              let safeValues = [city, format, lat, long];
+              let sqlQuery = 'INSERT INTO locations (search_query, formatted_query, latitude, longitude) VALUES ($1, $2, $3, $4);';
+
+              client.query(sqlQuery, safeValues)
+                .then()
+                .catch(err => error(err, res));
+            }).catch(err => error(err, res));
+        }
       })
       .catch(err => error(err, res));
-
-    if (!stored) {
-      let locationObj;
-      let format;
-      let lat;
-      let long;
-      superAgent.get(url)
-        .then(results => {
-          locationObj = new Location(city, results.body[0]);
-          format = locationObj.formatted_query;
-          lat = locationObj.latitude;
-          long = locationObj.longitude;
-          res.status(200).send(locationObj);
-
-          let safeValues = [city, format, lat, long];
-          let sqlQuery = 'INSERT INTO locations (search_query, formatted_query, latitude, longitude) VALUES ($1, $2, $3, $4);';
-
-          client.query(sqlQuery, safeValues)
-            .then()
-            .catch(err => error(err, res));
-        }).catch(err => error(err, res));
-    }
-    stored = false;
   } catch (err) {
     error(err, res);
   }
