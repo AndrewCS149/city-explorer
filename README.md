@@ -153,9 +153,9 @@ Number and name of feature: #11 Deploy
 
 Estimate of time needed to complete: 30 min
 
-Start time: 
+Start time: 1300
 
-Finish time: 
+Finish time: 13:45
 
-Actual time needed to complete: 
+Actual time needed to complete: 45 min 
 
