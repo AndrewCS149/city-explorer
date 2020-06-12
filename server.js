@@ -14,6 +14,13 @@ app.use(cors());
 const client = new pg.Client(process.env.DATABASE_URL);
 client.on('error', err => console.log(err));
 
+// routes
+app.get('/yelp', restaurantHandler);
+app.get('/movies', movieHandler);
+app.get('/location', locationHandler);
+app.get('/trails', trailHandler);
+app.get('/weather', weatherHandler);
+
 ////////////////////CONSTRUCTORS//////////////////////////////////
 
 // constructor for Location data
@@ -64,7 +71,7 @@ function Yelp(obj) {
   this.url = obj.url;
 }
 
-//////////////////////HELPER FUNCTIONS///////////////////////////////
+//////////////////////HELPER FUNCTIONS//////////////////////////////////////
 
 // 500 error message
 const error = (err, res) => {
@@ -74,15 +81,15 @@ const error = (err, res) => {
 
 ////////////////////////////ROUTES//////////////////////////////////////////
 
-// Yelp route
-app.get('/yelp', (req, res) => {
+function restaurantHandler(req, res) {
 
   let city = req.query.search_query;
   let url = `https://api.yelp.com/v3/businesses/search`;
 
   let queryParams = {
     location: city,
-    term: 'restaurants'
+    term: 'restaurants',
+    limit: 5
   }
 
   // pull yelp api data
@@ -96,11 +103,10 @@ app.get('/yelp', (req, res) => {
       res.status(200).send(yelp);
 
     }).catch(err => error(err, res));
-});
-
+}
 
 // Movies route
-app.get('/movies', (req, res) => {
+function movieHandler(req, res) {
 
   let city = req.query.search_query;
   let url = `https://api.themoviedb.org/3/search/movie`;
@@ -121,10 +127,10 @@ app.get('/movies', (req, res) => {
       res.status(200).send(movies);
 
     }).catch(err => error(err, res));
-});
+}
 
 // Trails route
-app.get('/trails', (req, res) => {
+function trailHandler(req, res) {
 
   let lat = req.query.latitude;
   let long = req.query.longitude;
@@ -137,10 +143,10 @@ app.get('/trails', (req, res) => {
       res.status(200).send(hikeObj);
 
     }).catch(err => error(err, res));
-});
+}
 
 // location route
-app.get('/location', (req, res) => {
+function locationHandler(req, res) {
 
   let city = req.query.city;
 
@@ -177,10 +183,10 @@ app.get('/location', (req, res) => {
           }).catch(err => error(err, res));
       }
     }).catch(err => error(err, res));
-});
+}
 
 // weather route
-app.get('/weather', (req, res) => {
+function weatherHandler(req, res) {
 
   let city = req.query.search_query;
 
@@ -191,7 +197,7 @@ app.get('/weather', (req, res) => {
       let wxArr = results.body.data.map(day => new Weather(day));
       res.status(200).send(wxArr);
     }).catch(err => error(err, res));
-});
+}
 
 /////////////////ROUTE LISTENERS////////////////////////////////////
 
