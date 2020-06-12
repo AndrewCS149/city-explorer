@@ -15,9 +15,10 @@ client.on('error', err => console.log(err));
 const weatherMod = require('./weather.js');
 const trailMod = require('./trails.js');
 const movieMod = require('./movies');
+const foodMod = require('./food.js');
 
 // routes
-app.get('/yelp', restaurantHandler);
+app.get('/yelp', foodMod.restaurantHandler);
 app.get('/movies', movieMod.movieHandler);
 app.get('/location', locationHandler);
 app.get('/trails', trailMod.trailHandler);
@@ -64,14 +65,14 @@ function Location(searchQuery, obj) {
 //   this.released_on = obj.release_date;
 // }
 
-// constructor for yelp
-function Yelp(obj) {
-  this.name = obj.name;
-  this.image_url = obj.image_url;
-  this.price = obj.price;
-  this.rating = obj.rating;
-  this.url = obj.url;
-}
+// // constructor for yelp
+// function Yelp(obj) {
+//   this.name = obj.name;
+//   this.image_url = obj.image_url;
+//   this.price = obj.price;
+//   this.rating = obj.rating;
+//   this.url = obj.url;
+// }
 
 //////////////////////HELPER FUNCTIONS//////////////////////////////////////
 
@@ -83,29 +84,29 @@ const error = (err, res) => {
 
 ////////////////////////////ROUTES//////////////////////////////////////////
 
-function restaurantHandler(req, res) {
+// function restaurantHandler(req, res) {
 
-  let city = req.query.search_query;
-  let url = `https://api.yelp.com/v3/businesses/search`;
+//   let city = req.query.search_query;
+//   let url = `https://api.yelp.com/v3/businesses/search`;
 
-  let queryParams = {
-    location: city,
-    term: 'restaurants',
-    limit: 5
-  }
+//   let queryParams = {
+//     location: city,
+//     term: 'restaurants',
+//     limit: 5
+//   }
 
-  // pull yelp api data
-  superAgent.get(url)
-    .set('Authorization', `Bearer ${process.env.YELP_API_KEY}`)
-    .query(queryParams)
-    .then(data => {
+//   // pull yelp api data
+//   superAgent.get(url)
+//     .set('Authorization', `Bearer ${process.env.YELP_API_KEY}`)
+//     .query(queryParams)
+//     .then(data => {
 
-      let yelpArr = data.body.businesses;
-      let yelp = yelpArr.map(val => new Yelp(val));
-      res.status(200).send(yelp);
+//       let yelpArr = data.body.businesses;
+//       let yelp = yelpArr.map(val => new Yelp(val));
+//       res.status(200).send(yelp);
 
-    }).catch(err => error(err, res));
-}
+//     }).catch(err => error(err, res));
+// }
 
 // // Movies route
 // function movieHandler(req, res) {
