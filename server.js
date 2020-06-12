@@ -82,7 +82,8 @@ app.get('/yelp', (req, res) => {
 
   let queryParams = {
     location: city,
-    term: 'restaurants'
+    term: 'restaurants',
+    limit: 5
   }
 
   // pull yelp api data
@@ -97,7 +98,6 @@ app.get('/yelp', (req, res) => {
 
     }).catch(err => error(err, res));
 });
-
 
 // Movies route
 app.get('/movies', (req, res) => {
