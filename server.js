@@ -55,6 +55,15 @@ function Movie(obj) {
   this.released_on = obj.release_date;
 }
 
+// constructor for yelp
+function Yelp(obj) {
+  this.name = obj.name;
+  this.image_url = obj.image_url;
+  this.price = obj.price;
+  this.rating = obj.rating;
+  this.url = obj.url;
+}
+
 //////////////////////HELPER FUNCTIONS///////////////////////////////
 
 // 500 error message
@@ -62,6 +71,30 @@ const error = (err, res) => {
   console.log('Error', err);
   res.status(500).send('There was an error on our part.');
 }
+
+////////////////////////////ROUTES//////////////////////////////////////////
+
+// Yelp route
+app.get('/yelp', (req, res) => {
+
+  let city = req.query.search_query;
+  // let url = `https://api.yelp.com/v3/businesses/search`;
+  let url = `https://api.yelp.com/v3/businesses/search`;
+  console.log('Yelp back end!');
+  let queryParams = {
+    location: city,
+    term: 'restaurants'
+  }
+
+  // pull data from api
+  superAgent.get(url)
+    .set('Authorization', `Bearer ${process.env.YELP_API_KEY}`)
+    .query(queryParams)
+    .then(data => {
+      console.log(data.body);
+    }).catch(err => error(err, res));
+});
+
 
 // Movies route
 app.get('/movies', (req, res) => {
@@ -80,13 +113,11 @@ app.get('/movies', (req, res) => {
     .query(queryParams)
     .then(data => {
       let moviesArr = data.body.results;
-      console.log(data.body);
       let movies = moviesArr.map(val => new Movie(val));
+
       res.status(200).send(movies);
     }).catch(err => error(err, res));
 });
-
-////////////////////////////ROUTES//////////////////////////////////////////
 
 // Trails route
 app.get('/trails', (req, res) => {
@@ -174,20 +205,3 @@ client.connect()
 
 // TODO: Fix potential issue with the try catch function displaying no matter what
 // TODO: make city a global variable
-
-// [nodemon] starting `node server.js`
-// listening on 3000
-// Movies route
-// movies back end
-// { page: 1,
-//   total_results: 47,
-//   total_pages: 3,
-//   results:
-//    [ { popularity: 15.584,
-//        id: 858,
-//        video: false,
-//        vote_count: 1376,
-//        vote_average: 6.7,
-//        title: 'Sleepless in Seattle',
-//        release_date: '1993-06-24',
-//        original_language: 'en'
