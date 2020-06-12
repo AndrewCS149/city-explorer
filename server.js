@@ -28,6 +28,7 @@ function Weather(obj) {
   this.time = obj.datetime;
 }
 
+// constructor for trails / hikes
 function Hike(obj) {
   this.name = obj.name;
   this.location = obj.location;
@@ -41,19 +42,39 @@ function Hike(obj) {
   this.condition_time = new Date(obj.conditionDate).toLocaleTimeString();
 }
 
+// constructor for movies
+function Movie(obj) {
+  this.title = obj.title;
+  this.overview = obj.overview;
+  this.avgVotes = obj.average_votes;
+  this.totalVotes = obj.total_votes;
+  this.imgUrl = obj.image_url;
+  this.popularity = obj.popularity;
+  this.releaseDate = obj.released_on;
+}
+
 // 500 error message
 const error = (err, res) => {
   console.log('Error', err);
   res.status(500).send('There was an error on our part.');
 }
 
-// Trails path
+// Movies route
+app.get('/movies', (req, res) => {
+
+  // let url = `https://api.themoviedb.org/3/movie/550?api_key=df5ef82418cc0fb97e40d4f85b8cba00`;
+
+});
+
+
+
+// Trails route
 app.get('/trails', (req, res) => {
 
   let lat = req.query.latitude;
   let long = req.query.longitude;
 
-  let url = `https://www.hikingproject.com/data/get-trails?lat=${lat}&lon=${long}&maxDistance=10&key=${process.env.TRAIL_API_KEY}`
+  let url = `https://www.hikingproject.com/data/get-trails?lat=${lat}&lon=${long}&maxDistance=10&key=${process.env.TRAIL_API_KEY}`;
 
   superAgent.get(url)
     .then(results => {
@@ -63,7 +84,7 @@ app.get('/trails', (req, res) => {
     }).catch(err => error(err, res));
 });
 
-// location path
+// location route
 app.get('/location', (req, res) => {
 
   let city = req.query.city;
@@ -84,16 +105,12 @@ app.get('/location', (req, res) => {
 
         // if results dont exist in the DB, grab API data
       } else {
-        let locationObj;
-        let format;
-        let lat;
-        let long;
         superAgent.get(url)
           .then(results => {
-            locationObj = new Location(city, results.body[0]);
-            format = locationObj.formatted_query;
-            lat = locationObj.latitude;
-            long = locationObj.longitude;
+            let locationObj = new Location(city, results.body[0]);
+            let format = locationObj.formatted_query;
+            let lat = locationObj.latitude;
+            let long = locationObj.longitude;
             res.status(200).send(locationObj);
 
             let safeValues = [city, format, lat, long];
@@ -107,7 +124,7 @@ app.get('/location', (req, res) => {
     }).catch(err => error(err, res));
 });
 
-// weather path
+// weather route
 app.get('/weather', (req, res) => {
 
   let city = req.query.search_query;
@@ -132,9 +149,5 @@ client.connect()
       console.log(`listening on ${PORT}`);
     });
   });
-
-// app.listen(PORT, () => {
-//   console.log(`listening on ${PORT}.`);
-// });
 
 // TODO: Fix potential issue with the try catch function displaying no matter what
