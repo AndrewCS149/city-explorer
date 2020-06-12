@@ -16,23 +16,24 @@ const weatherMod = require('./weather.js');
 const trailMod = require('./trails.js');
 const movieMod = require('./movies');
 const foodMod = require('./food.js');
+const locationMod = require('./location.js');
 
 // routes
 app.get('/yelp', foodMod.restaurantHandler);
 app.get('/movies', movieMod.movieHandler);
-app.get('/location', locationHandler);
+app.get('/location', locationMod.locationHandler);
 app.get('/trails', trailMod.trailHandler);
 app.get('/weather', weatherMod.weatherHandler);
 
 ////////////////////CONSTRUCTORS//////////////////////////////////
 
-// constructor for Location data
-function Location(searchQuery, obj) {
-  this.search_query = searchQuery;
-  this.formatted_query = obj.display_name;
-  this.latitude = obj.lat;
-  this.longitude = obj.lon;
-}
+// // constructor for Location data
+// function Location(searchQuery, obj) {
+//   this.search_query = searchQuery;
+//   this.formatted_query = obj.display_name;
+//   this.latitude = obj.lat;
+//   this.longitude = obj.lon;
+// }
 
 // constructor for weather data
 // function Weather(obj) {
@@ -148,46 +149,45 @@ const error = (err, res) => {
 //     }).catch(err => error(err, res));
 // }
 
-// locationHandler();
 // // location route
-function locationHandler(req, res) {
+// function locationHandler(req, res) {
 
-  let city = req.query.city;
+//   let city = req.query.city;
 
-  // url to the data that we want
-  let url = `https://us1.locationiq.com/v1/search.php?key=${process.env.GEO_DATA_API_KEY}&q=${city}&format=json`;
+//   // url to the data that we want
+//   let url = `https://us1.locationiq.com/v1/search.php?key=${process.env.GEO_DATA_API_KEY}&q=${city}&format=json`;
 
-  // check city_explorer DB data
-  let citiesQuery = 'SELECT * FROM locations WHERE search_query LIKE ($1);';
+//   // check city_explorer DB data
+//   let citiesQuery = 'SELECT * FROM locations WHERE search_query LIKE ($1);';
 
-  let safeVal = [city];
-  client.query(citiesQuery, safeVal)
-    .then(results => {
+//   let safeVal = [city];
+//   client.query(citiesQuery, safeVal)
+//     .then(results => {
 
-      // if the results already exist in DB, then send that data
-      if (results.rowCount) {
-        res.status(200).send(results.rows[0]);
+//       // if the results already exist in DB, then send that data
+//       if (results.rowCount) {
+//         res.status(200).send(results.rows[0]);
 
-        // if results dont exist in the DB, grab API data
-      } else {
-        superAgent.get(url)
-          .then(results => {
-            let locationObj = new Location(city, results.body[0]);
-            let format = locationObj.formatted_query;
-            let lat = locationObj.latitude;
-            let long = locationObj.longitude;
-            res.status(200).send(locationObj);
+//         // if results dont exist in the DB, grab API data
+//       } else {
+//         superAgent.get(url)
+//           .then(results => {
+//             let locationObj = new Location(city, results.body[0]);
+//             let format = locationObj.formatted_query;
+//             let lat = locationObj.latitude;
+//             let long = locationObj.longitude;
+//             res.status(200).send(locationObj);
 
-            let safeValues = [city, format, lat, long];
-            let sqlQuery = 'INSERT INTO locations (search_query, formatted_query, latitude, longitude) VALUES ($1, $2, $3, $4);';
+//             let safeValues = [city, format, lat, long];
+//             let sqlQuery = 'INSERT INTO locations (search_query, formatted_query, latitude, longitude) VALUES ($1, $2, $3, $4);';
 
-            client.query(sqlQuery, safeValues)
-              .then()
-              .catch(err => error(err, res));
-          }).catch(err => error(err, res));
-      }
-    }).catch(err => error(err, res));
-}
+//             client.query(sqlQuery, safeValues)
+//               .then()
+//               .catch(err => error(err, res));
+//           }).catch(err => error(err, res));
+//       }
+//     }).catch(err => error(err, res));
+// }
 
 // // weather route
 // function weatherHandler(req, res) {
