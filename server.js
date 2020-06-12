@@ -14,7 +14,9 @@ app.use(cors());
 const client = new pg.Client(process.env.DATABASE_URL);
 client.on('error', err => console.log(err));
 
-// constructor function for Location data
+////////////////////CONSTRUCTORS//////////////////////////////////
+
+// constructor for Location data
 function Location(searchQuery, obj) {
   this.search_query = searchQuery;
   this.formatted_query = obj.display_name;
@@ -22,7 +24,7 @@ function Location(searchQuery, obj) {
   this.longitude = obj.lon;
 }
 
-// constructor function for weather data
+// constructor for weather data
 function Weather(obj) {
   this.forecast = obj.weather.description;
   this.time = obj.datetime;
@@ -46,12 +48,14 @@ function Hike(obj) {
 function Movie(obj) {
   this.title = obj.title;
   this.overview = obj.overview;
-  this.avgVotes = obj.average_votes;
-  this.totalVotes = obj.total_votes;
-  this.imgUrl = obj.image_url;
+  this.average_votes = obj.vote_average;
+  this.total_votes = obj.vote_count;
+  this.image_url = `https://image.tmdb.org/t/p/w500${obj.poster_path}`;
   this.popularity = obj.popularity;
-  this.releaseDate = obj.released_on;
+  this.released_on = obj.release_date;
 }
+
+//////////////////////HELPER FUNCTIONS///////////////////////////////
 
 // 500 error message
 const error = (err, res) => {
@@ -62,11 +66,27 @@ const error = (err, res) => {
 // Movies route
 app.get('/movies', (req, res) => {
 
-  // let url = `https://api.themoviedb.org/3/movie/550?api_key=df5ef82418cc0fb97e40d4f85b8cba00`;
+  let city = req.query.search_query;
+  let url = `https://api.themoviedb.org/3/search/movie`;
 
+  let queryParams = {
+    api_key: process.env.MOVIE_API_KEY,
+    query: city,
+    limit: 20
+  }
+
+  // grab movies api data
+  superAgent.get(url)
+    .query(queryParams)
+    .then(data => {
+      let moviesArr = data.body.results;
+      console.log(data.body);
+      let movies = moviesArr.map(val => new Movie(val));
+      res.status(200).send(movies);
+    }).catch(err => error(err, res));
 });
 
-
+////////////////////////////ROUTES//////////////////////////////////////////
 
 // Trails route
 app.get('/trails', (req, res) => {
@@ -138,6 +158,8 @@ app.get('/weather', (req, res) => {
     }).catch(err => error(err, res));
 });
 
+/////////////////ROUTE LISTENERS////////////////////////////////////
+
 // catch all for unknown routes
 app.get('*', (req, res) => {
   res.status(404).send('Sorry, this route does not exist.');
@@ -151,3 +173,21 @@ client.connect()
   });
 
 // TODO: Fix potential issue with the try catch function displaying no matter what
+// TODO: make city a global variable
+
+// [nodemon] starting `node server.js`
+// listening on 3000
+// Movies route
+// movies back end
+// { page: 1,
+//   total_results: 47,
+//   total_pages: 3,
+//   results:
+//    [ { popularity: 15.584,
+//        id: 858,
+//        video: false,
+//        vote_count: 1376,
+//        vote_average: 6.7,
+//        title: 'Sleepless in Seattle',
+//        release_date: '1993-06-24',
+//        original_language: 'en'
