@@ -78,20 +78,23 @@ const error = (err, res) => {
 app.get('/yelp', (req, res) => {
 
   let city = req.query.search_query;
-  // let url = `https://api.yelp.com/v3/businesses/search`;
   let url = `https://api.yelp.com/v3/businesses/search`;
-  console.log('Yelp back end!');
+
   let queryParams = {
     location: city,
     term: 'restaurants'
   }
 
-  // pull data from api
+  // pull yelp api data
   superAgent.get(url)
     .set('Authorization', `Bearer ${process.env.YELP_API_KEY}`)
     .query(queryParams)
     .then(data => {
-      console.log(data.body);
+
+      let yelpArr = data.body.businesses;
+      let yelp = yelpArr.map(val => new Yelp(val));
+      res.status(200).send(yelp);
+
     }).catch(err => error(err, res));
 });
 
@@ -108,14 +111,15 @@ app.get('/movies', (req, res) => {
     limit: 20
   }
 
-  // grab movies api data
+  // pull movie api data
   superAgent.get(url)
     .query(queryParams)
     .then(data => {
+
       let moviesArr = data.body.results;
       let movies = moviesArr.map(val => new Movie(val));
-
       res.status(200).send(movies);
+
     }).catch(err => error(err, res));
 });
 
@@ -124,14 +128,14 @@ app.get('/trails', (req, res) => {
 
   let lat = req.query.latitude;
   let long = req.query.longitude;
-
   let url = `https://www.hikingproject.com/data/get-trails?lat=${lat}&lon=${long}&maxDistance=10&key=${process.env.TRAIL_API_KEY}`;
 
   superAgent.get(url)
     .then(results => {
-      let hikeObj = results.body.trails.map(hike => new Hike(hike));
 
+      let hikeObj = results.body.trails.map(hike => new Hike(hike));
       res.status(200).send(hikeObj);
+
     }).catch(err => error(err, res));
 });
 
