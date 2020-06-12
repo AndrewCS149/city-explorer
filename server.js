@@ -49,90 +49,76 @@ const error = (err, res) => {
 
 // Trails path
 app.get('/trails', (req, res) => {
-  try {
 
-    let lat = req.query.latitude;
-    let long = req.query.longitude;
+  let lat = req.query.latitude;
+  let long = req.query.longitude;
 
-    let url = `https://www.hikingproject.com/data/get-trails?lat=${lat}&lon=${long}&maxDistance=10&key=${process.env.TRAIL_API_KEY}`
+  let url = `https://www.hikingproject.com/data/get-trails?lat=${lat}&lon=${long}&maxDistance=10&key=${process.env.TRAIL_API_KEY}`
 
-    superAgent.get(url)
-      .then(results => {
-        let hikeObj = results.body.trails.map(hike => new Hike(hike));
+  superAgent.get(url)
+    .then(results => {
+      let hikeObj = results.body.trails.map(hike => new Hike(hike));
 
-        res.status(200).send(hikeObj);
-      });
-
-  } catch (err) {
-    error(err, res);
-  }
+      res.status(200).send(hikeObj);
+    }).catch(err => error(err, res));
 });
 
 // location path
 app.get('/location', (req, res) => {
-  try {
-    let city = req.query.city;
 
-    // url to the data that we want
-    let url = `https://us1.locationiq.com/v1/search.php?key=${process.env.GEO_DATA_API_KEY}&q=${city}&format=json`;
+  let city = req.query.city;
 
-    // check city_explorer DB data
-    let citiesQuery = 'SELECT * FROM locations WHERE search_query LIKE ($1);';
+  // url to the data that we want
+  let url = `https://us1.locationiq.com/v1/search.php?key=${process.env.GEO_DATA_API_KEY}&q=${city}&format=json`;
 
-    let safeVal = [city];
-    client.query(citiesQuery, safeVal)
-      .then(results => {
+  // check city_explorer DB data
+  let citiesQuery = 'SELECT * FROM locations WHERE search_query LIKE ($1);';
 
-        // if the results already exist in DB, then send that data
-        if (results.rowCount) {
-          res.status(200).send(results.rows[0]);
+  let safeVal = [city];
+  client.query(citiesQuery, safeVal)
+    .then(results => {
 
-          // if results dont exist in the DB, grab API data
-        } else {
-          let locationObj;
-          let format;
-          let lat;
-          let long;
-          superAgent.get(url)
-            .then(results => {
-              locationObj = new Location(city, results.body[0]);
-              format = locationObj.formatted_query;
-              lat = locationObj.latitude;
-              long = locationObj.longitude;
-              res.status(200).send(locationObj);
+      // if the results already exist in DB, then send that data
+      if (results.rowCount) {
+        res.status(200).send(results.rows[0]);
 
-              let safeValues = [city, format, lat, long];
-              let sqlQuery = 'INSERT INTO locations (search_query, formatted_query, latitude, longitude) VALUES ($1, $2, $3, $4);';
+        // if results dont exist in the DB, grab API data
+      } else {
+        let locationObj;
+        let format;
+        let lat;
+        let long;
+        superAgent.get(url)
+          .then(results => {
+            locationObj = new Location(city, results.body[0]);
+            format = locationObj.formatted_query;
+            lat = locationObj.latitude;
+            long = locationObj.longitude;
+            res.status(200).send(locationObj);
 
-              client.query(sqlQuery, safeValues)
-                .then()
-                .catch(err => error(err, res));
-            }).catch(err => error(err, res));
-        }
-      })
-      .catch(err => error(err, res));
-  } catch (err) {
-    error(err, res);
-  }
+            let safeValues = [city, format, lat, long];
+            let sqlQuery = 'INSERT INTO locations (search_query, formatted_query, latitude, longitude) VALUES ($1, $2, $3, $4);';
+
+            client.query(sqlQuery, safeValues)
+              .then()
+              .catch(err => error(err, res));
+          }).catch(err => error(err, res));
+      }
+    }).catch(err => error(err, res));
 });
 
 // weather path
 app.get('/weather', (req, res) => {
 
-  try {
-    let city = req.query.search_query;
+  let city = req.query.search_query;
 
-    let url = `https://api.weatherbit.io/v2.0/forecast/daily?city=${city}&key=${process.env.WEATHER_API_KEY}&days=8`;
+  let url = `https://api.weatherbit.io/v2.0/forecast/daily?city=${city}&key=${process.env.WEATHER_API_KEY}&days=8`;
 
-    superAgent.get(url)
-      .then(results => {
-        let wxArr = results.body.data.map(day => new Weather(day));
-        res.status(200).send(wxArr);
-      });
-
-  } catch (err) {
-    error(err, res);
-  }
+  superAgent.get(url)
+    .then(results => {
+      let wxArr = results.body.data.map(day => new Weather(day));
+      res.status(200).send(wxArr);
+    }).catch(err => error(err, res));
 });
 
 // catch all for unknown routes
