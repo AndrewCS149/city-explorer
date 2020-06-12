@@ -6,20 +6,29 @@ const superAgent = require('superagent');
 const pg = require('pg');
 require('dotenv').config();
 const PORT = process.env.PORT || 3001;
-
-// remove browser protection to be able to pull data
 const cors = require('cors');
 app.use(cors());
-
 const client = new pg.Client(process.env.DATABASE_URL);
 client.on('error', err => console.log(err));
+
+// bring in modules
+const weatherMod = require('./weather.js');
+
+// function search(req, res) {
+//   const search = req.query.search_query;
+// }
+
+// const search = (req) => req.query.search_query;
+
+// weatherMod.weatherHandler(search);
+
 
 // routes
 app.get('/yelp', restaurantHandler);
 app.get('/movies', movieHandler);
 app.get('/location', locationHandler);
 app.get('/trails', trailHandler);
-app.get('/weather', weatherHandler);
+app.get('/weather', weatherMod.weatherHandler);
 
 ////////////////////CONSTRUCTORS//////////////////////////////////
 
@@ -32,10 +41,10 @@ function Location(searchQuery, obj) {
 }
 
 // constructor for weather data
-function Weather(obj) {
-  this.forecast = obj.weather.description;
-  this.time = obj.datetime;
-}
+// function Weather(obj) {
+//   this.forecast = obj.weather.description;
+//   this.time = obj.datetime;
+// }
 
 // constructor for trails / hikes
 function Hike(obj) {
@@ -145,7 +154,8 @@ function trailHandler(req, res) {
     }).catch(err => error(err, res));
 }
 
-// location route
+// locationHandler();
+// // location route
 function locationHandler(req, res) {
 
   let city = req.query.city;
@@ -185,19 +195,19 @@ function locationHandler(req, res) {
     }).catch(err => error(err, res));
 }
 
-// weather route
-function weatherHandler(req, res) {
+// // weather route
+// function weatherHandler(req, res) {
 
-  let city = req.query.search_query;
+//   let city = req.query.search_query;
 
-  let url = `https://api.weatherbit.io/v2.0/forecast/daily?city=${city}&key=${process.env.WEATHER_API_KEY}&days=8`;
+//   let url = `https://api.weatherbit.io/v2.0/forecast/daily?city=${city}&key=${process.env.WEATHER_API_KEY}&days=8`;
 
-  superAgent.get(url)
-    .then(results => {
-      let wxArr = results.body.data.map(day => new Weather(day));
-      res.status(200).send(wxArr);
-    }).catch(err => error(err, res));
-}
+//   superAgent.get(url)
+//     .then(results => {
+//       let wxArr = results.body.data.map(day => new Weather(day));
+//       res.status(200).send(wxArr);
+//     }).catch(err => error(err, res));
+// }
 
 /////////////////ROUTE LISTENERS////////////////////////////////////
 
