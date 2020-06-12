@@ -14,10 +14,11 @@ client.on('error', err => console.log(err));
 // bring in modules
 const weatherMod = require('./weather.js');
 const trailMod = require('./trails.js');
+const movieMod = require('./movies');
 
 // routes
 app.get('/yelp', restaurantHandler);
-app.get('/movies', movieHandler);
+app.get('/movies', movieMod.movieHandler);
 app.get('/location', locationHandler);
 app.get('/trails', trailMod.trailHandler);
 app.get('/weather', weatherMod.weatherHandler);
@@ -52,16 +53,16 @@ function Location(searchQuery, obj) {
 //   this.condition_time = new Date(obj.conditionDate).toLocaleTimeString();
 // }
 
-// constructor for movies
-function Movie(obj) {
-  this.title = obj.title;
-  this.overview = obj.overview;
-  this.average_votes = obj.vote_average;
-  this.total_votes = obj.vote_count;
-  this.image_url = `https://image.tmdb.org/t/p/w500${obj.poster_path}`;
-  this.popularity = obj.popularity;
-  this.released_on = obj.release_date;
-}
+// // constructor for movies
+// function Movie(obj) {
+//   this.title = obj.title;
+//   this.overview = obj.overview;
+//   this.average_votes = obj.vote_average;
+//   this.total_votes = obj.vote_count;
+//   this.image_url = `https://image.tmdb.org/t/p/w500${obj.poster_path}`;
+//   this.popularity = obj.popularity;
+//   this.released_on = obj.release_date;
+// }
 
 // constructor for yelp
 function Yelp(obj) {
@@ -106,29 +107,29 @@ function restaurantHandler(req, res) {
     }).catch(err => error(err, res));
 }
 
-// Movies route
-function movieHandler(req, res) {
+// // Movies route
+// function movieHandler(req, res) {
 
-  let city = req.query.search_query;
-  let url = `https://api.themoviedb.org/3/search/movie`;
+//   let city = req.query.search_query;
+//   let url = `https://api.themoviedb.org/3/search/movie`;
 
-  let queryParams = {
-    api_key: process.env.MOVIE_API_KEY,
-    query: city,
-    limit: 20
-  }
+//   let queryParams = {
+//     api_key: process.env.MOVIE_API_KEY,
+//     query: city,
+//     limit: 20
+//   }
 
-  // pull movie api data
-  superAgent.get(url)
-    .query(queryParams)
-    .then(data => {
+//   // pull movie api data
+//   superAgent.get(url)
+//     .query(queryParams)
+//     .then(data => {
 
-      let moviesArr = data.body.results;
-      let movies = moviesArr.map(val => new Movie(val));
-      res.status(200).send(movies);
+//       let moviesArr = data.body.results;
+//       let movies = moviesArr.map(val => new Movie(val));
+//       res.status(200).send(movies);
 
-    }).catch(err => error(err, res));
-}
+//     }).catch(err => error(err, res));
+// }
 
 // // Trails route
 // function trailHandler(req, res) {
