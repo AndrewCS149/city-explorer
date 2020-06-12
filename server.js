@@ -13,21 +13,13 @@ client.on('error', err => console.log(err));
 
 // bring in modules
 const weatherMod = require('./weather.js');
-
-// function search(req, res) {
-//   const search = req.query.search_query;
-// }
-
-// const search = (req) => req.query.search_query;
-
-// weatherMod.weatherHandler(search);
-
+const trailMod = require('./trails.js');
 
 // routes
 app.get('/yelp', restaurantHandler);
 app.get('/movies', movieHandler);
 app.get('/location', locationHandler);
-app.get('/trails', trailHandler);
+app.get('/trails', trailMod.trailHandler);
 app.get('/weather', weatherMod.weatherHandler);
 
 ////////////////////CONSTRUCTORS//////////////////////////////////
@@ -46,19 +38,19 @@ function Location(searchQuery, obj) {
 //   this.time = obj.datetime;
 // }
 
-// constructor for trails / hikes
-function Hike(obj) {
-  this.name = obj.name;
-  this.location = obj.location;
-  this.length = obj.length;
-  this.stars = obj.stars;
-  this.star_votes = obj.starVotes;
-  this.summary = obj.summary;
-  this.trail_url = obj.url;
-  this.conditions = obj.conditions;
-  this.condition_date = new Date(obj.conditionDate).toLocaleDateString();
-  this.condition_time = new Date(obj.conditionDate).toLocaleTimeString();
-}
+// // constructor for trails / hikes
+// function Hike(obj) {
+//   this.name = obj.name;
+//   this.location = obj.location;
+//   this.length = obj.length;
+//   this.stars = obj.stars;
+//   this.star_votes = obj.starVotes;
+//   this.summary = obj.summary;
+//   this.trail_url = obj.url;
+//   this.conditions = obj.conditions;
+//   this.condition_date = new Date(obj.conditionDate).toLocaleDateString();
+//   this.condition_time = new Date(obj.conditionDate).toLocaleTimeString();
+// }
 
 // constructor for movies
 function Movie(obj) {
@@ -138,21 +130,21 @@ function movieHandler(req, res) {
     }).catch(err => error(err, res));
 }
 
-// Trails route
-function trailHandler(req, res) {
+// // Trails route
+// function trailHandler(req, res) {
 
-  let lat = req.query.latitude;
-  let long = req.query.longitude;
-  let url = `https://www.hikingproject.com/data/get-trails?lat=${lat}&lon=${long}&maxDistance=10&key=${process.env.TRAIL_API_KEY}`;
+//   let lat = req.query.latitude;
+//   let long = req.query.longitude;
+//   let url = `https://www.hikingproject.com/data/get-trails?lat=${lat}&lon=${long}&maxDistance=10&key=${process.env.TRAIL_API_KEY}`;
 
-  superAgent.get(url)
-    .then(results => {
+//   superAgent.get(url)
+//     .then(results => {
 
-      let hikeObj = results.body.trails.map(hike => new Hike(hike));
-      res.status(200).send(hikeObj);
+//       let hikeObj = results.body.trails.map(hike => new Hike(hike));
+//       res.status(200).send(hikeObj);
 
-    }).catch(err => error(err, res));
-}
+//     }).catch(err => error(err, res));
+// }
 
 // locationHandler();
 // // location route
