@@ -1,15 +1,12 @@
 'use strict';
 
+const cl = require('./server');
 const express = require('express')
 const app = express()
 const superAgent = require('superagent');
-const pg = require('pg');
 require('dotenv').config();
-const PORT = process.env.PORT || 3001;
 const cors = require('cors');
 app.use(cors());
-const client = new pg.Client(process.env.DATABASE_URL);
-client.on('error', err => console.log(err));
 
 // 500 error message
 const error = (err, res) => {
@@ -33,11 +30,10 @@ function locationHandler(req, res) {
 
   // check city_explorer DB data
   let citiesQuery = 'SELECT * FROM locations WHERE search_query LIKE ($1);';
-
   let safeVal = [city];
-  client.query(citiesQuery, safeVal)
+  console.log(safeVal);
+  cl.client.query(citiesQuery, safeVal)
     .then(results => {
-      console.log(safeVal);
       // if the results already exist in DB, then send that data
       if (results.rowCount) {
         res.status(200).send(results.rows[0]);
@@ -55,7 +51,7 @@ function locationHandler(req, res) {
             let safeValues = [city, format, lat, long];
             let sqlQuery = 'INSERT INTO locations (search_query, formatted_query, latitude, longitude) VALUES ($1, $2, $3, $4);';
 
-            client.query(sqlQuery, safeValues)
+            cl.client.query(sqlQuery, safeValues)
               .then()
               .catch(err => error(err, res));
           }).catch(err => error(err, res));
